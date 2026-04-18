@@ -1,0 +1,201 @@
+{
+  "$schema": "./node_modules/@mywallpaper/addon-schema/schema.json",
+  "name": "Video Player",
+  "version": "0.1.1",
+  "entry": "index.js",
+  "description": "Optimized video player widget for MyWallpaper with local files, direct URLs, and practical playback controls.",
+  "type": "widget",
+  "repository": "https://github.com/MyWallpapers/mywallpaper-addon-video-player",
+  "permissions": {
+    "fileAccess": true,
+    "network": {
+      "domains": [
+        "*"
+      ],
+      "read": true
+    }
+  },
+  "settings": {
+    "sourceSection": {
+      "type": "section",
+      "content": {
+        "label": "Source"
+      }
+    },
+    "sourceType": {
+      "type": "select",
+      "content": {
+        "label": "Source type",
+        "default": "file",
+        "options": [
+          {
+            "label": "Local file",
+            "value": "file"
+          },
+          {
+            "label": "Direct URL",
+            "value": "url"
+          }
+        ]
+      }
+    },
+    "videoFile": {
+      "type": "file",
+      "content": {
+        "label": "Video file",
+        "showIf": {
+          "setting": "sourceType",
+          "equals": "file"
+        }
+      }
+    },
+    "videoUrl": {
+      "type": "string",
+      "content": {
+        "label": "Video URL",
+        "default": "",
+        "placeholder": "https://example.com/video.mp4",
+        "showIf": {
+          "setting": "sourceType",
+          "equals": "url"
+        }
+      }
+    },
+    "playbackSection": {
+      "type": "section",
+      "content": {
+        "label": "Playback"
+      }
+    },
+    "autoplay": {
+      "type": "boolean",
+      "content": {
+        "label": "Autoplay",
+        "default": true
+      }
+    },
+    "loop": {
+      "type": "boolean",
+      "content": {
+        "label": "Loop",
+        "default": true
+      }
+    },
+    "muted": {
+      "type": "boolean",
+      "content": {
+        "label": "Muted",
+        "default": true
+      }
+    },
+    "showControls": {
+      "type": "boolean",
+      "content": {
+        "label": "Show controls",
+        "default": false
+      }
+    },
+    "clickToTogglePlayback": {
+      "type": "boolean",
+      "content": {
+        "label": "Click to play or pause",
+        "default": true
+      }
+    },
+    "volume": {
+      "type": "range",
+      "content": {
+        "label": "Volume",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "default": 100
+      }
+    },
+    "playbackRate": {
+      "type": "range",
+      "content": {
+        "label": "Playback speed",
+        "min": 0.25,
+        "max": 2,
+        "step": 0.25,
+        "default": 1
+      }
+    },
+    "startAtSeconds": {
+      "type": "range",
+      "content": {
+        "label": "Start at (seconds)",
+        "min": 0,
+        "max": 300,
+        "step": 1,
+        "default": 0
+      }
+    },
+    "preload": {
+      "type": "select",
+      "content": {
+        "label": "Preload",
+        "default": "metadata",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Metadata",
+            "value": "metadata"
+          },
+          {
+            "label": "Auto",
+            "value": "auto"
+          }
+        ]
+      }
+    },
+    "displaySection": {
+      "type": "section",
+      "content": {
+        "label": "Display"
+      }
+    },
+    "objectFit": {
+      "type": "select",
+      "content": {
+        "label": "Fit mode",
+        "default": "contain",
+        "options": [
+          {
+            "label": "Contain",
+            "value": "contain"
+          },
+          {
+            "label": "Cover",
+            "value": "cover"
+          },
+          {
+            "label": "Fill",
+            "value": "fill"
+          }
+        ]
+      }
+    },
+    "borderRadius": {
+      "type": "range",
+      "content": {
+        "label": "Corner radius",
+        "min": 0,
+        "max": 48,
+        "step": 1,
+        "default": 24
+      }
+    },
+    "backgroundColor": {
+      "type": "color",
+      "content": {
+        "label": "Background",
+        "default": "#0C0C0D"
+      }
+    }
+  }
+}

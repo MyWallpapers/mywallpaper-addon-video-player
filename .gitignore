@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.mywallpaper-runtime-artifacts.json
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/
