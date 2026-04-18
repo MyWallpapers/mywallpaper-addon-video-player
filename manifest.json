@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@mywallpaper/addon-schema/schema.json",
   "name": "Video Player",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "entry": "index.js",
   "description": "Optimized video player widget for MyWallpaper with local files, direct URLs, and practical playback controls.",
   "type": "widget",
