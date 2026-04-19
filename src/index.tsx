@@ -204,6 +204,7 @@ export default function VideoPlayer() {
     padding: 0,
     margin: 0,
     overflow: 'hidden',
+    position: 'relative',
     borderRadius: radius,
     background: normalizeHex(settings.backgroundColor),
     display: 'grid',
