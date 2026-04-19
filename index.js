@@ -1,14 +1,14 @@
-import { jsx as s, jsxs as M } from "react/jsx-runtime";
-import { useRef as w, useState as g, useMemo as A, useEffect as d } from "react";
-import { useFiles as U, useSettings as I, useViewport as L } from "@mywallpaper/sdk-react";
-const F = {
+import { jsx, jsxs } from "react/jsx-runtime";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { useFiles, useSettings, useViewport } from "@mywallpaper/sdk-react";
+const DEFAULT_SETTINGS = {
   sourceType: "file",
   videoUrl: "",
-  autoplay: !0,
-  loop: !0,
-  muted: !0,
-  showControls: !1,
-  clickToTogglePlayback: !0,
+  autoplay: true,
+  loop: true,
+  muted: true,
+  showControls: false,
+  clickToTogglePlayback: true,
   playbackRate: 1,
   volume: 100,
   startAtSeconds: 0,
@@ -16,7 +16,8 @@ const F = {
   objectFit: "contain",
   borderRadius: 24,
   backgroundColor: "#0C0C0D"
-}, $ = {
+};
+const MIME_BY_EXTENSION = {
   mp4: "video/mp4",
   m4v: "video/mp4",
   webm: "video/webm",
@@ -26,84 +27,136 @@ const F = {
   mkv: "video/x-matroska",
   avi: "video/x-msvideo"
 };
-function N(o) {
-  return { ...F, ...o };
+function mergeSettings(raw) {
+  return { ...DEFAULT_SETTINGS, ...raw };
 }
-function y(o) {
-  const l = o.trim();
-  if (/^#[0-9a-fA-F]{6}$/.test(l)) return l;
-  if (/^#[0-9a-fA-F]{3}$/.test(l)) {
-    const [, e, c, a] = l;
-    return `#${e}${e}${c}${c}${a}${a}`;
+function normalizeHex(value) {
+  const trimmed = value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
+  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+    const [, r, g, b] = trimmed;
+    return `#${r}${r}${g}${g}${b}${b}`;
   }
-  return F.backgroundColor;
+  return DEFAULT_SETTINGS.backgroundColor;
 }
-function j(o) {
-  const l = o.split(".").pop()?.toLowerCase().split("?")[0] ?? "";
-  return $[l] ?? "";
+function inferMimeType(url) {
+  const ext = url.split(".").pop()?.toLowerCase().split("?")[0] ?? "";
+  return MIME_BY_EXTENSION[ext] ?? "";
 }
-function q() {
-  const o = U(), l = I(), e = N(l), c = L(), a = w(null), n = w(null), [T, m] = g(null), [h, u] = g(null), [E, f] = g(!1), i = e.sourceType === "url" ? e.videoUrl.trim() : T, b = A(() => i ? j(i) : "", [i]), p = !!i, C = Math.max(0, Math.min(48, e.borderRadius));
-  d(() => {
-    if (e.sourceType !== "file") {
-      n.current && (o.release(n.current), n.current = null), m(null);
+function VideoPlayer() {
+  const files = useFiles();
+  const rawSettings = useSettings();
+  const settings = mergeSettings(rawSettings);
+  const viewport = useViewport();
+  const videoRef = useRef(null);
+  const localUrlRef = useRef(null);
+  const [fileUrl, setFileUrl] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const sourceUrl = settings.sourceType === "url" ? settings.videoUrl.trim() : fileUrl;
+  const sourceMimeType = useMemo(() => sourceUrl ? inferMimeType(sourceUrl) : "", [sourceUrl]);
+  const hasSource = Boolean(sourceUrl);
+  const radius = Math.max(0, Math.min(48, settings.borderRadius));
+  useEffect(() => {
+    if (settings.sourceType !== "file") {
+      if (localUrlRef.current) {
+        files.release(localUrlRef.current);
+        localUrlRef.current = null;
+      }
+      setFileUrl(null);
       return;
     }
-    let t = !1;
-    return u(null), o.request("videoFile").then((r) => {
-      if (t) {
-        r && o.release(r);
+    let cancelled = false;
+    setLoadError(null);
+    void files.request("videoFile").then((url) => {
+      if (cancelled) {
+        if (url) files.release(url);
         return;
       }
-      n.current && n.current !== r && o.release(n.current), n.current = r, m(r);
-    }).catch((r) => {
-      t || (m(null), u(r instanceof Error ? r.message : "Unable to load local file"));
-    }), () => {
-      t = !0;
+      if (localUrlRef.current && localUrlRef.current !== url) files.release(localUrlRef.current);
+      localUrlRef.current = url;
+      setFileUrl(url);
+    }).catch((error) => {
+      if (cancelled) return;
+      setFileUrl(null);
+      setLoadError(error instanceof Error ? error.message : "Unable to load local file");
+    });
+    return () => {
+      cancelled = true;
     };
-  }, [o, e.sourceType]), d(() => () => {
-    n.current && (o.release(n.current), n.current = null);
-  }, [o]), d(() => {
-    const t = a.current;
-    t && (t.muted = e.muted, t.loop = e.loop, t.controls = e.showControls, t.playbackRate = e.playbackRate, t.volume = Math.max(0, Math.min(1, e.volume / 100)));
-  }, [e.loop, e.muted, e.playbackRate, e.showControls, e.volume, i]), d(() => {
-    const t = a.current;
-    if (!t) return;
-    const r = () => {
-      f(!0), e.startAtSeconds > 0 && Number.isFinite(t.duration) && (t.currentTime = Math.min(e.startAtSeconds, Math.max(0, t.duration || e.startAtSeconds)));
-    }, S = () => {
-      u("This video format is not supported here"), f(!1);
-    };
-    return t.addEventListener("loadedmetadata", r), t.addEventListener("error", S), () => {
-      t.removeEventListener("loadedmetadata", r), t.removeEventListener("error", S);
-    };
-  }, [e.startAtSeconds, i]), d(() => {
-    const t = a.current;
-    !t || !p || (f(!1), u(null), e.autoplay ? t.play().catch(() => {
-    }) : t.pause());
-  }, [p, e.autoplay, i]);
-  const x = () => {
-    if (!e.clickToTogglePlayback) return;
-    const t = a.current;
-    if (!(!t || !p)) {
-      if (t.paused) {
-        t.play().catch(() => {
-        });
-        return;
+  }, [files, settings.sourceType]);
+  useEffect(() => {
+    return () => {
+      if (localUrlRef.current) {
+        files.release(localUrlRef.current);
+        localUrlRef.current = null;
       }
-      t.pause();
+    };
+  }, [files]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = settings.muted;
+    video.loop = settings.loop;
+    video.controls = settings.showControls;
+    video.playbackRate = settings.playbackRate;
+    video.volume = Math.max(0, Math.min(1, settings.volume / 100));
+  }, [settings.loop, settings.muted, settings.playbackRate, settings.showControls, settings.volume, sourceUrl]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const onLoadedMetadata = () => {
+      setIsReady(true);
+      if (settings.startAtSeconds > 0 && Number.isFinite(video.duration)) {
+        video.currentTime = Math.min(settings.startAtSeconds, Math.max(0, video.duration || settings.startAtSeconds));
+      }
+    };
+    const onError = () => {
+      setLoadError("This video format is not supported here");
+      setIsReady(false);
+    };
+    video.addEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("error", onError);
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      video.removeEventListener("error", onError);
+    };
+  }, [settings.startAtSeconds, sourceUrl]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !hasSource) return;
+    setIsReady(false);
+    setLoadError(null);
+    if (settings.autoplay) {
+      void video.play().catch(() => {
+      });
+    } else {
+      video.pause();
     }
-  }, v = {
+  }, [hasSource, settings.autoplay, sourceUrl]);
+  const handleTogglePlayback = () => {
+    if (!settings.clickToTogglePlayback) return;
+    const video = videoRef.current;
+    if (!video || !hasSource) return;
+    if (video.paused) {
+      void video.play().catch(() => {
+      });
+      return;
+    }
+    video.pause();
+  };
+  const wrapperStyle = {
     width: "100%",
     height: "100%",
     padding: 0,
     margin: 0,
     overflow: "hidden",
-    borderRadius: C,
-    background: y(e.backgroundColor),
+    borderRadius: radius,
+    background: normalizeHex(settings.backgroundColor),
     display: "grid",
     placeItems: "center"
-  }, k = {
+  };
+  const emptyStateStyle = {
     width: "100%",
     height: "100%",
     display: "grid",
@@ -111,34 +164,41 @@ function q() {
     padding: 20,
     textAlign: "center",
     color: "#F4F4F5",
-    background: y(e.backgroundColor),
+    background: normalizeHex(settings.backgroundColor),
     fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-    fontSize: c.width < 360 ? 14 : 15,
+    fontSize: viewport.width < 360 ? 14 : 15,
     lineHeight: 1.4
-  }, R = {
+  };
+  const videoStyle = {
     width: "100%",
     height: "100%",
-    objectFit: e.objectFit,
+    objectFit: settings.objectFit,
     display: "block",
-    background: y(e.backgroundColor)
+    background: normalizeHex(settings.backgroundColor)
   };
-  return h ? /* @__PURE__ */ s("div", { style: v, children: /* @__PURE__ */ s("div", { style: k, children: h }) }) : p ? /* @__PURE__ */ M("div", { style: v, onClick: x, children: [
-    /* @__PURE__ */ s(
+  if (loadError) {
+    return /* @__PURE__ */ jsx("div", { style: wrapperStyle, children: /* @__PURE__ */ jsx("div", { style: emptyStateStyle, children: loadError }) });
+  }
+  if (!hasSource) {
+    return /* @__PURE__ */ jsx("div", { style: wrapperStyle, children: /* @__PURE__ */ jsx("div", { style: emptyStateStyle, children: settings.sourceType === "file" ? "Select a local video file" : "Enter a direct video URL" }) });
+  }
+  return /* @__PURE__ */ jsxs("div", { style: wrapperStyle, onClick: handleTogglePlayback, children: [
+    /* @__PURE__ */ jsx(
       "video",
       {
-        ref: a,
-        src: i ?? void 0,
-        style: R,
-        autoPlay: e.autoplay,
-        loop: e.loop,
-        muted: e.muted,
-        controls: e.showControls,
-        playsInline: !0,
-        preload: e.preload,
-        children: b ? /* @__PURE__ */ s("source", { src: i ?? void 0, type: b }) : null
+        ref: videoRef,
+        src: sourceUrl ?? void 0,
+        style: videoStyle,
+        autoPlay: settings.autoplay,
+        loop: settings.loop,
+        muted: settings.muted,
+        controls: settings.showControls,
+        playsInline: true,
+        preload: settings.preload,
+        children: sourceMimeType ? /* @__PURE__ */ jsx("source", { src: sourceUrl ?? void 0, type: sourceMimeType }) : null
       }
     ),
-    !E && !e.showControls ? /* @__PURE__ */ s(
+    !isReady && !settings.showControls ? /* @__PURE__ */ jsx(
       "div",
       {
         style: {
@@ -149,14 +209,15 @@ function q() {
           background: "rgba(0, 0, 0, 0.2)",
           color: "#F4F4F5",
           fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-          fontSize: c.width < 360 ? 14 : 15,
+          fontSize: viewport.width < 360 ? 14 : 15,
           pointerEvents: "none"
         },
         children: "Loading video"
       }
     ) : null
-  ] }) : /* @__PURE__ */ s("div", { style: v, children: /* @__PURE__ */ s("div", { style: k, children: e.sourceType === "file" ? "Select a local video file" : "Enter a direct video URL" }) });
+  ] });
 }
 export {
-  q as default
+  VideoPlayer as default
 };
+//# sourceMappingURL=index.js.map
