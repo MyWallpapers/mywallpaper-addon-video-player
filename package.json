@@ -1,6 +1,6 @@
 {
   "name": "video-player",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "@mywallpaper/addon-dev": "^0.1.3",
     "@mywallpaper/addon-schema": "^0.1.1",
     "@mywallpaper/sdk-react": "^0.1.1",
-    "@mywallpaper/vite-plugin": "^0.1.0",
+    "@mywallpaper/vite-plugin": "file:../MyWallpaper/packages/vite-plugin",
     "@types/react": "^19.1.2",
     "react": "^19.0.0",
     "typescript": "~5.8.3",

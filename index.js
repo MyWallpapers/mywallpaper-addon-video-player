@@ -1,6 +1,24 @@
-import { jsx as s, jsxs as M } from "react/jsx-runtime";
-import { useRef as w, useState as g, useMemo as A, useEffect as d } from "react";
-import { useFiles as U, useSettings as I, useViewport as L } from "@mywallpaper/sdk-react";
+const __MYWALLPAPER_WIDGET_RUNTIME_CONTRACT__ = "1";
+if (!__canvasRuntime) {
+      throw new Error('Canvas runtime globals are unavailable');
+    }
+if (!__canvasRuntime.react || !__canvasRuntime.reactJsxRuntime || !__canvasRuntime.sdkReact || !__canvasRuntime.sdkContracts || !__canvasRuntime.sdkPermissions) {
+      throw new Error('Canvas runtime globals are unavailable');
+    }
+const __canvasRuntimeReact = __canvasRuntime.react;
+const __canvasRuntimeJsxRuntime = __canvasRuntime.reactJsxRuntime;
+const __canvasRuntimeSdk = __canvasRuntime.sdkReact;
+const __canvasRuntimeSdkContracts = __canvasRuntime.sdkContracts;
+const __canvasRuntimeSdkPermissions = __canvasRuntime.sdkPermissions;
+const s = __canvasRuntimeJsxRuntime.jsx;
+const M = __canvasRuntimeJsxRuntime.jsxs;
+const w = __canvasRuntimeReact.useRef;
+const g = __canvasRuntimeReact.useState;
+const A = __canvasRuntimeReact.useMemo;
+const d = __canvasRuntimeReact.useEffect;
+const U = __canvasRuntimeSdk.useFiles;
+const I = __canvasRuntimeSdk.useSettings;
+const L = __canvasRuntimeSdk.useViewport;
 const F = {
   sourceType: "file",
   videoUrl: "",
