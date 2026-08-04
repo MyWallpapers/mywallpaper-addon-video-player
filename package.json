@@ -1,20 +1,17 @@
 {
-  "name": "video-player",
-  "version": "0.1.5",
+  "name": "mywallpaper-addon-video-player",
+  "version": "0.1.6",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.12.0",
   "scripts": {
     "build": "vite build",
-    "dev": "mywallpaper-addon dev"
+    "dev": "vite --host 127.0.0.1 --port 5184",
+    "preview": "vite preview --host 127.0.0.1 --port 5184",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@mywallpaper/addon-dev": "^0.1.3",
-    "@mywallpaper/addon-schema": "^0.1.1",
-    "@mywallpaper/sdk-react": "^0.1.1",
-    "@mywallpaper/vite-plugin": "file:../MyWallpaper/packages/vite-plugin",
-    "@types/react": "^19.1.2",
-    "react": "^19.0.0",
     "typescript": "~5.8.3",
-    "vite": "^7.3.2"
+    "vite": "^7.3.6"
   }
 }
