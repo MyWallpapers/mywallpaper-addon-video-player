@@ -1,201 +1,158 @@
 {
-  "$schema": "./node_modules/@mywallpaper/addon-schema/schema.json",
+  "runtime": "canvas-v1",
   "name": "Video Player",
-  "version": "0.1.5",
-  "entry": "index.js",
-  "description": "Optimized video player widget for MyWallpaper with local files, direct URLs, and practical playback controls.",
-  "type": "widget",
-  "repository": "https://github.com/MyWallpapers/mywallpaper-addon-video-player",
-  "permissions": {
-    "fileAccess": true,
-    "network": {
-      "domains": [
-        "*"
-      ],
-      "read": true
-    }
+  "description": "Plays a local or live video resource with deliberate playback and presentation controls.",
+  "version": "0.1.6",
+  "entry": "dist/index.html",
+  "thumbnail": "assets/thumbnail.png",
+  "deviceSettingsVersion": "2",
+  "ui": {
+    "pointerEvents": "auto"
   },
-  "settings": {
-    "sourceSection": {
+  "settings": [
+    {
+      "id": "source",
       "type": "section",
-      "content": {
-        "label": "Source"
-      }
+      "label": "Source"
     },
-    "sourceType": {
-      "type": "select",
-      "content": {
-        "label": "Source type",
-        "default": "file",
-        "options": [
-          {
-            "label": "Local file",
-            "value": "file"
-          },
-          {
-            "label": "Direct URL",
-            "value": "url"
-          }
-        ]
-      }
+    {
+      "id": "video",
+      "type": "resource",
+      "label": "Video",
+      "description": "Choose a local video file or enter a live URL.",
+      "parent": "source",
+      "scope": "layer",
+      "mirrorEligible": true
     },
-    "videoFile": {
-      "type": "file",
-      "content": {
-        "label": "Video file",
-        "showIf": {
-          "setting": "sourceType",
-          "equals": "file"
-        }
-      }
-    },
-    "videoUrl": {
-      "type": "string",
-      "content": {
-        "label": "Video URL",
-        "default": "",
-        "placeholder": "https://example.com/video.mp4",
-        "showIf": {
-          "setting": "sourceType",
-          "equals": "url"
-        }
-      }
-    },
-    "playbackSection": {
+    {
+      "id": "playback",
       "type": "section",
-      "content": {
-        "label": "Playback"
-      }
+      "label": "Playback"
     },
-    "autoplay": {
+    {
+      "id": "autoplay",
       "type": "boolean",
-      "content": {
-        "label": "Autoplay",
-        "default": true
-      }
+      "label": "Autoplay",
+      "parent": "playback",
+      "scope": "layer",
+      "default": true
     },
-    "loop": {
+    {
+      "id": "loop",
       "type": "boolean",
-      "content": {
-        "label": "Loop",
-        "default": true
-      }
+      "label": "Loop",
+      "parent": "playback",
+      "scope": "layer",
+      "default": true
     },
-    "muted": {
+    {
+      "id": "muted",
       "type": "boolean",
-      "content": {
-        "label": "Muted",
-        "default": true
-      }
+      "label": "Muted",
+      "description": "Most browsers require muted playback for autoplay.",
+      "parent": "playback",
+      "scope": "layer",
+      "default": true
     },
-    "showControls": {
+    {
+      "id": "showControls",
       "type": "boolean",
-      "content": {
-        "label": "Show controls",
-        "default": false
-      }
+      "label": "Show controls",
+      "parent": "playback",
+      "scope": "layer",
+      "default": false
     },
-    "clickToTogglePlayback": {
+    {
+      "id": "clickToToggle",
       "type": "boolean",
-      "content": {
-        "label": "Click to play or pause",
-        "default": true
-      }
+      "label": "Click to play or pause",
+      "parent": "playback",
+      "scope": "layer",
+      "default": true
     },
-    "volume": {
+    {
+      "id": "volume",
       "type": "range",
-      "content": {
-        "label": "Volume",
-        "min": 0,
-        "max": 100,
-        "step": 5,
-        "default": 100
-      }
+      "label": "Volume",
+      "parent": "playback",
+      "scope": "layer",
+      "default": 100,
+      "min": 0,
+      "max": 100,
+      "step": 1
     },
-    "playbackRate": {
+    {
+      "id": "playbackRate",
       "type": "range",
-      "content": {
-        "label": "Playback speed",
-        "min": 0.25,
-        "max": 2,
-        "step": 0.25,
-        "default": 1
-      }
+      "label": "Playback speed",
+      "parent": "playback",
+      "scope": "layer",
+      "default": 1,
+      "min": 0.25,
+      "max": 2,
+      "step": 0.25
     },
-    "startAtSeconds": {
-      "type": "range",
-      "content": {
-        "label": "Start at (seconds)",
-        "min": 0,
-        "max": 300,
-        "step": 1,
-        "default": 0
-      }
+    {
+      "id": "startAtSeconds",
+      "type": "number",
+      "label": "Start at (seconds)",
+      "parent": "playback",
+      "scope": "layer",
+      "default": 0,
+      "min": 0,
+      "max": 86400,
+      "step": 1
     },
-    "preload": {
+    {
+      "id": "preload",
       "type": "select",
-      "content": {
-        "label": "Preload",
-        "default": "metadata",
-        "options": [
-          {
-            "label": "None",
-            "value": "none"
-          },
-          {
-            "label": "Metadata",
-            "value": "metadata"
-          },
-          {
-            "label": "Auto",
-            "value": "auto"
-          }
-        ]
-      }
+      "label": "Preload",
+      "parent": "playback",
+      "scope": "layer",
+      "default": "metadata",
+      "options": [
+        { "label": "None", "value": "none" },
+        { "label": "Metadata", "value": "metadata" },
+        { "label": "Automatic", "value": "auto" }
+      ]
     },
-    "displaySection": {
+    {
+      "id": "display",
       "type": "section",
-      "content": {
-        "label": "Display"
-      }
+      "label": "Display"
     },
-    "objectFit": {
+    {
+      "id": "objectFit",
       "type": "select",
-      "content": {
-        "label": "Fit mode",
-        "default": "contain",
-        "options": [
-          {
-            "label": "Contain",
-            "value": "contain"
-          },
-          {
-            "label": "Cover",
-            "value": "cover"
-          },
-          {
-            "label": "Fill",
-            "value": "fill"
-          }
-        ]
-      }
+      "label": "Fit",
+      "parent": "display",
+      "scope": "layer",
+      "default": "contain",
+      "options": [
+        { "label": "Contain", "value": "contain" },
+        { "label": "Cover", "value": "cover" },
+        { "label": "Stretch", "value": "fill" }
+      ]
     },
-    "borderRadius": {
+    {
+      "id": "borderRadius",
       "type": "range",
-      "content": {
-        "label": "Corner radius",
-        "min": 0,
-        "max": 48,
-        "step": 1,
-        "default": 24
-      }
+      "label": "Corner radius",
+      "parent": "display",
+      "scope": "layer",
+      "default": 24,
+      "min": 0,
+      "max": 100,
+      "step": 1
     },
-    "backgroundColor": {
+    {
+      "id": "backgroundColor",
       "type": "color",
-      "content": {
-        "label": "Background",
-        "default": "#0C0C0D"
-      }
+      "label": "Background",
+      "parent": "display",
+      "scope": "layer",
+      "alpha": true,
+      "default": "#0c0c0dff"
     }
-  }
+  ]
 }
