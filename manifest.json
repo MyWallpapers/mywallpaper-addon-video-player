@@ -21,8 +21,7 @@
       "label": "Video",
       "description": "Choose a local video file or enter a live URL.",
       "parent": "source",
-      "scope": "layer",
-      "mirrorEligible": true
+      "scope": "layer"
     },
     {
       "id": "playback",
