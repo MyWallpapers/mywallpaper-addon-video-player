@@ -2,8 +2,8 @@
   "runtime": "canvas-v1",
   "name": "Video Player",
   "description": "Plays a local or live video resource with deliberate playback and presentation controls.",
-  "version": "0.1.6",
-  "entry": "dist/index.html",
+  "version": "0.1.7",
+  "entry": "dist/assets/addon.js",
   "thumbnail": "assets/thumbnail.png",
   "deviceSettingsVersion": "2",
   "ui": {
