@@ -2,7 +2,7 @@
   "runtime": "canvas-v1",
   "name": "Video Player",
   "description": "Plays a local or live video resource with deliberate playback and presentation controls.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "entry": "dist/assets/addon.js",
   "thumbnail": "assets/thumbnail.png",
   "deviceSettingsVersion": "2",
@@ -110,9 +110,18 @@
       "scope": "layer",
       "default": "metadata",
       "options": [
-        { "label": "None", "value": "none" },
-        { "label": "Metadata", "value": "metadata" },
-        { "label": "Automatic", "value": "auto" }
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Metadata",
+          "value": "metadata"
+        },
+        {
+          "label": "Automatic",
+          "value": "auto"
+        }
       ]
     },
     {
@@ -128,9 +137,18 @@
       "scope": "layer",
       "default": "contain",
       "options": [
-        { "label": "Contain", "value": "contain" },
-        { "label": "Cover", "value": "cover" },
-        { "label": "Stretch", "value": "fill" }
+        {
+          "label": "Contain",
+          "value": "contain"
+        },
+        {
+          "label": "Cover",
+          "value": "cover"
+        },
+        {
+          "label": "Stretch",
+          "value": "fill"
+        }
       ]
     },
     {
